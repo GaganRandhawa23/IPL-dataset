@@ -16,6 +16,7 @@ public class Main {
             while((line = reader.readLine()) != null)
             {
                 System.out.println(line);
+                Matches data= new Matches(line);
 
             }
             System.out.println( reader.readLine());
