@@ -24,9 +24,9 @@ public class Deliveries {
       this.batsman_runs= Integer.parseInt(parts[15]);
       this.extra_runs= Integer.parseInt(parts[16]);
       this.total_runs= Integer.parseInt(parts[17]);
-        this.player_dismissed = (parts.length > 18 ) ? parts[8] : null;
-        this.dismissal_kind = (parts.length > 19 ) ? parts[19] : null;
-        this.fielder = (parts.length > 20 ) ? parts[20] : null;
+      this.player_dismissed = (parts.length > 18 ) ? parts[8] : null;
+      this.dismissal_kind = (parts.length > 19 ) ? parts[19] : null;
+      this.fielder = (parts.length > 20 ) ? parts[20] : null;
 
 
     }

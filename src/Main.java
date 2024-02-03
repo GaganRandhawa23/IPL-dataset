@@ -28,21 +28,8 @@ public class Main {
             e.printStackTrace();
         }
 
-        matchesPerYear(data);
-    }
 
-
-    public static void matchesPerYear(ArrayList<Matches> dataList) {
-        HashMap<Integer, Integer> map = new HashMap<>();
-
-        for (Matches match : dataList) {
-            map.put(match.year, map.getOrDefault(match.year, 0) + 1);
-        }
-
-        System.out.println("Q1.) Number of matches played per year in IPL:");
-
-        for (int year : map.keySet()) {
-            System.out.println("Year " + year + ": " + map.get(year) + " matches");
-        }
+        DataProcessor.matchesPerYear(data);
+        DataProcessor.teamWins(data);
     }
 }
