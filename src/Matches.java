@@ -1,21 +1,6 @@
 public class Matches {
-    public int id;
-    public int year;
-    public String city;
-    public String date;
-    public String team1;
-    public String team2;
-    public String toss_winner;
-    public String toss_decision;
-    public String result;
-    public String dl;
-    public String winner;
-    public int wins_by_run;
-    public int wins_by_wicket;
-    public String player;
-    public String venue;
-    public String umpire1;
-    public String umpire2;
+    public int id, year, wins_by_run, wins_by_wicket;
+    public String city, date, team1, team2, toss_winner, toss_decision, result, dl, winner, player, venue, umpire1, umpire2;
 
     public Matches(String s)
     {
