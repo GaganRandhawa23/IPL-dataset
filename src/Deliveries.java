@@ -27,8 +27,6 @@ public class Deliveries {
       this.player_dismissed = (parts.length > 18 ) ? parts[8] : null;
       this.dismissal_kind = (parts.length > 19 ) ? parts[19] : null;
       this.fielder = (parts.length > 20 ) ? parts[20] : null;
-
-
     }
 
 

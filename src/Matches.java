@@ -25,7 +25,7 @@ public class Matches {
             if (parts.length > 16) {
                 this.umpire2 = parts[16];
             } else {
-                this.umpire2 = null; // Set umpire2 to null if not present
+                this.umpire2 = null;
             }
         } else {
             this.umpire1 = null; // Set umpire1 to null if not present
