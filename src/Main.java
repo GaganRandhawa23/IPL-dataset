@@ -45,10 +45,10 @@ public class Main {
         ArrayList<Match> matches = getMatchesData();
         ArrayList<Delivery> data2 = getDeliveriesData();
 
-        matchesPerYear(matches);
-        teamWins(matches);
-        extraRuns(matches, data2, 2016);
-        topBowler(matches, data2, 2015);
+        findMatchesPerYear(matches);
+        findTeamWinsPerAllYear(matches);
+        extraRunsConcededPerTeam(matches, data2, 2016);
+        findTopEconomicalBowler(matches, data2, 2015);
 
     }
 
@@ -61,7 +61,7 @@ public class Main {
             String fileHeading = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)|(?<=\")(,)(?=\")");
+                String[] parts = line.split(",", -1);
                 Match match = new Match();
 
                 match.setId(Integer.parseInt(parts[MATCH_ID]));
@@ -79,17 +79,8 @@ public class Main {
                 match.setWins_by_wicket(Integer.parseInt(parts[MATCH_WIN_BY_WICKETS]));
                 match.setPlayer(parts[MATCH_PLAYER]);
                 match.setVenue(parts[MATCH_VENUE]);
-                if (parts.length > 15) {
-                    match.setUmpire1(parts[MATCH_UMPIRE1]);
-                    if (parts.length > 16) {
-                        match.setUmpire2(parts[MATCH_UMPIRE2]);
-                    } else {
-                        match.setUmpire2(null);
-                    }
-                } else {
-                    match.setUmpire1(null); // Set umpire1 to null if not present
-                    match.setUmpire2(null); // Set umpire2 to null if not present
-                }
+                match.setUmpire1(parts[MATCH_UMPIRE1]);
+                match.setUmpire2(parts[MATCH_UMPIRE2]);
                 matches.add(match);
             }
             reader.close();
@@ -108,7 +99,7 @@ public class Main {
             String fileHeading = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                String[] parts = line.split(",", -1);
                 Delivery delivery = new Delivery();
                 delivery.setMatch_id(Integer.parseInt(parts[MATCH_ID]));
                 delivery.setInning(Integer.parseInt(parts[DELIVERY_INNING]));
@@ -128,9 +119,9 @@ public class Main {
                 delivery.setBatsman_runs(Integer.parseInt(parts[DELIVERY_BATSMAN_RUNS]));
                 delivery.setExtra_runs(Integer.parseInt(parts[DELIVERY_EXTRA_RUNS]));
                 delivery.setTotal_runs(Integer.parseInt(parts[DELIVERY_TOTAL_RUNS]));
-                delivery.setPlayer_dismissed((parts.length > 18) ? parts[DELIVERY_PLAYER_DISMISSED] : null);
-                delivery.setDismissal_kind((parts.length > 19) ? parts[DELIVERY_DISMISSAL_KIND] : null);
-                delivery.setFielder((parts.length > 20) ? parts[DELIVERY_FIELDER] : null);
+                delivery.setPlayer_dismissed(parts[DELIVERY_PLAYER_DISMISSED]);
+                delivery.setDismissal_kind(parts[DELIVERY_DISMISSAL_KIND]);
+                delivery.setFielder(parts[DELIVERY_FIELDER]);
 
                 deliveries.add(delivery);
             }
@@ -142,7 +133,7 @@ public class Main {
 
     }
 
-    private static void matchesPerYear(ArrayList<Match> matches) {
+    private static void findMatchesPerYear(ArrayList<Match> matches) {
         HashMap<Integer, Integer> map = new HashMap<>();
 
         for (Match match : matches) {
@@ -152,13 +143,13 @@ public class Main {
         System.out.println(map);
     }
 
-    private static void teamWins(ArrayList<Match> matches) {
+    private static void findTeamWinsPerAllYear(ArrayList<Match> matches) {
         HashMap<String, Integer> map = new HashMap<>();
 
         for (Match match : matches) {
             String winner;
             if (match.getWinner().isEmpty()) {
-                winner = "No Result";
+                winner = "Result Not Declared";
             } else {
                 winner = match.getWinner();
             }
@@ -168,7 +159,7 @@ public class Main {
         System.out.println(map);
     }
 
-    public static void extraRuns(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
+    public static void extraRunsConcededPerTeam(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
         HashMap<String, Integer> map = new HashMap<>();
 
         for (Delivery delivery : deliveries) {
@@ -180,42 +171,39 @@ public class Main {
         System.out.println(map);
     }
 
-    public static void topBowler(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
-        HashMap<String, Integer> runs = new HashMap<>();
-        HashMap<String, Integer> valid_balls = new HashMap<>();
+    public static void findTopEconomicalBowler(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
+        HashMap<String, Integer> totalRuns = new HashMap<>();
+        HashMap<String, Integer> validBalls = new HashMap<>();
 
         for (Delivery delivery : deliveries) {
             if (isMatcingYear(matches, year, delivery)) {
-                runs.put(delivery.getBowler(), runs.getOrDefault(delivery.getBowler(), 0) + delivery.getTotal_runs());
+                totalRuns.put(delivery.getBowler(), totalRuns.getOrDefault(delivery.getBowler(), 0) + delivery.getTotal_runs());
             }
         }
 
         for (Delivery delivery : deliveries) {
             if (isMatcingYear(matches, year, delivery) && delivery.getNoball_runs() == 0 && delivery.getWide_runs() == 0) {
-                valid_balls.put(delivery.getBowler(), valid_balls.getOrDefault(delivery.getBowler(), 0) + 1);
+                validBalls.put(delivery.getBowler(), validBalls.getOrDefault(delivery.getBowler(), 0) + 1);
             }
         }
 
         HashMap<String, Double> economy = new HashMap<>();
-        Set<String> keys = runs.keySet();
+        Set<String> keys = totalRuns.keySet();
         for (String key : keys) {
-            int total_runs = runs.get(key);
-            float overs = (float)(valid_balls.get(key)) / 6;
+            int total_runs = totalRuns.get(key);
+            float overs = (float) (validBalls.get(key)) / 6;
 
             economy.put(key, (double) (total_runs / overs));
         }
 
-        List<Map.Entry<String, Double>> sortedEntries = economy.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue()).collect(Collectors.toList());
+        List<Map.Entry<String, Double>> sortedEntries = economy.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue()).toList();
 
         System.out.println("Q.4) Top 10 Economical Bowlers: ");
-        int count = 0;
-        for (Map.Entry<String, Double> entry : sortedEntries) {
-            if (count < 10) {
-                System.out.print(entry + ", ");
-                count++;
-            } else {
-                break;
-            }
+
+        for (int i = 0; i  < 10; i++)
+        {
+            Map.Entry<String, Double> entry = sortedEntries.get(i);
+            System.out.print(entry + ", ");
         }
     }
 
