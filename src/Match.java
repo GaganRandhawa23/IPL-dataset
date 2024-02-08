@@ -1,6 +1,6 @@
 public class Match {
-    private int id, year, wins_by_run, wins_by_wicket;
-    private String city, date, team1, team2, toss_winner, toss_decision, result, dl, winner, player, venue, umpire1, umpire2;
+    private int id, year, winsByRun, winsByWicket;
+    private String city, date, team1, team2, tossWinner, tossDecision, result, dl, winner, player, venue, umpire1, umpire2;
 
     public int getId() {
         return id;
@@ -16,20 +16,20 @@ public class Match {
         this.year = year;
     }
 
-    public int getWins_by_run() {
-        return wins_by_run;
+    public int getWinsByRun() {
+        return winsByRun;
     }
 
-    public void setWins_by_run(int wins_by_run) {
-        this.wins_by_run = wins_by_run;
+    public void setWinsByRun(int winsByRun) {
+        this.winsByRun = winsByRun;
     }
 
-    public int getWins_by_wicket() {
-        return wins_by_wicket;
+    public int getWinsByWicket() {
+        return winsByWicket;
     }
 
-    public void setWins_by_wicket(int wins_by_wicket) {
-        this.wins_by_wicket = wins_by_wicket;
+    public void setWinsByWicket(int winsByWicket) {
+        this.winsByWicket = winsByWicket;
     }
 
     public String getCity() {
@@ -64,20 +64,20 @@ public class Match {
         this.team2 = team2;
     }
 
-    public String getToss_winner() {
-        return toss_winner;
+    public String getTossWinner() {
+        return tossWinner;
     }
 
-    public void setToss_winner(String toss_winner) {
-        this.toss_winner = toss_winner;
+    public void setTossWinner(String tossWinner) {
+        this.tossWinner = tossWinner;
     }
 
-    public String getToss_decision() {
-        return toss_decision;
+    public String getTossDecision() {
+        return tossDecision;
     }
 
-    public void setToss_decision(String toss_decision) {
-        this.toss_decision = toss_decision;
+    public void setTossDecision(String tossDecision) {
+        this.tossDecision = tossDecision;
     }
 
     public String getResult() {
