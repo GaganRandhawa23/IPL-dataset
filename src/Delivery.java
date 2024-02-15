@@ -1,6 +1,6 @@
 public class Delivery {
     private int matchId, inning, over, ball, isSuperOver, wideRuns, byeRuns, legbyeRuns, noballRuns, penaltyRuns, batsmanRuns, extraRuns, totalRuns;
-    private String battingTeam, bowlingTeam, batsman, bowler, non_striker, playerDismissed, dismissal_kind, fielder;
+    private String battingTeam, bowlingTeam, batsman, bowler, nonStriker, playerDismissed, dismissalKind, fielder;
 
 
   public int getMatchId() {
@@ -139,12 +139,12 @@ public class Delivery {
     this.bowler = bowler;
   }
 
-  public String getNon_striker() {
-    return non_striker;
+  public String getNonStriker() {
+    return nonStriker;
   }
 
-  public void setNon_striker(String non_striker) {
-    this.non_striker = non_striker;
+  public void setNonStriker(String nonStriker) {
+    this.nonStriker = nonStriker;
   }
 
   public String getPlayerDismissed() {
@@ -155,12 +155,12 @@ public class Delivery {
     this.playerDismissed = playerDismissed;
   }
 
-  public String getDismissal_kind() {
-    return dismissal_kind;
+  public String getDismissalKind() {
+    return dismissalKind;
   }
 
-  public void setDismissal_kind(String dismissal_kind) {
-    this.dismissal_kind = dismissal_kind;
+  public void setDismissalKind(String dismissalKind) {
+    this.dismissalKind = dismissalKind;
   }
 
   public String getFielder() {

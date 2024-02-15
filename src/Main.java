@@ -1,50 +1,54 @@
 import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 public class Main {
-    public static final int MATCH_ID = 0;
-    public static final int MATCH_YEAR = 1;
-    public static final int MATCH_CITY = 2;
-    public static final int MATCH_DATE = 3;
-    public static final int MATCH_TEAM1 = 4;
-    public static final int MATCH_TEAM2 = 5;
-    public static final int MATCH_TOSS_WINNER = 6;
-    public static final int MATCH_TOSS_DECISION = 7;
-    public static final int MATCH_RESULT = 8;
-    public static final int MATCH_DL = 9;
-    public static final int MATCH_WINNER = 10;
-    public static final int MATCH_WIN_BY_RUNS = 11;
-    public static final int MATCH_WIN_BY_WICKETS = 12;
-    public static final int MATCH_PLAYER = 13;
-    public static final int MATCH_VENUE = 14;
-    public static final int MATCH_UMPIRE1 = 15;
-    public static final int MATCH_UMPIRE2 = 16;
-    public static final int DELIVERY_INNING = 1;
-    public static final int DELIVERY_BATTING_TEAM = 2;
-    public static final int DELIVERY_BOWLING_TEAM = 3;
-    public static final int DELIVERY_OVER = 4;
-    public static final int DELIVERY_BALL = 5;
-    public static final int DELIVERY_BATSMAN = 6;
-    public static final int DELIVERY_NON_STRIKER = 7;
-    public static final int DELIVERY_BOWLER = 8;
-    public static final int DELIVERY_IS_SUPER_OVER = 9;
-    public static final int DELIVERY_RUNS = 10;
-    public static final int DELIVERY_BYE_RUNS = 11;
-    public static final int DELIVERY_LEGBYE_RUNS = 12;
-    public static final int DELIVERY_NOBALL_RUNS = 13;
-    public static final int DELIVERY_PENALTY_RUNS = 14;
-    public static final int DELIVERY_BATSMAN_RUNS = 15;
-    public static final int DELIVERY_EXTRA_RUNS = 16;
-    public static final int DELIVERY_TOTAL_RUNS = 17;
-    public static final int DELIVERY_PLAYER_DISMISSED = 18;
-    public static final int DELIVERY_DISMISSAL_KIND = 19;
-    public static final int DELIVERY_FIELDER = 20;
+    public static final int MATCH_ID = 1;
+    public static final int MATCH_YEAR = 2;
+    public static final int MATCH_CITY = 3;
+    public static final int MATCH_DATE = 4;
+    public static final int MATCH_TEAM1 = 5;
+    public static final int MATCH_TEAM2 = 6;
+    public static final int MATCH_TOSS_WINNER = 7;
+    public static final int MATCH_TOSS_DECISION = 8;
+    public static final int MATCH_RESULT = 9;
+    public static final int MATCH_DL = 10;
+    public static final int MATCH_WINNER = 11;
+    public static final int MATCH_WIN_BY_RUNS = 12;
+    public static final int MATCH_WIN_BY_WICKETS = 13;
+    public static final int MATCH_PLAYER = 14;
+    public static final int MATCH_VENUE = 15;
+    public static final int MATCH_UMPIRE1 = 16;
+    public static final int MATCH_UMPIRE2 = 17;
+    public static final int DELIVERY_INNING = 2;
+    public static final int DELIVERY_BATTING_TEAM = 3;
+    public static final int DELIVERY_BOWLING_TEAM = 4;
+    public static final int DELIVERY_OVER = 5;
+    public static final int DELIVERY_BALL = 6;
+    public static final int DELIVERY_BATSMAN = 7;
+    public static final int DELIVERY_NON_STRIKER = 8;
+    public static final int DELIVERY_BOWLER = 9;
+    public static final int DELIVERY_IS_SUPER_OVER = 10;
+    public static final int DELIVERY_RUNS = 11;
+    public static final int DELIVERY_BYE_RUNS = 12;
+    public static final int DELIVERY_LEGBYE_RUNS = 13;
+    public static final int DELIVERY_NOBALL_RUNS = 14;
+    public static final int DELIVERY_PENALTY_RUNS = 15;
+    public static final int DELIVERY_BATSMAN_RUNS = 16;
+    public static final int DELIVERY_EXTRA_RUNS = 17;
+    public static final int DELIVERY_TOTAL_RUNS = 18;
+    public static final int DELIVERY_PLAYER_DISMISSED = 19;
+    public static final int DELIVERY_DISMISSAL_KIND = 20;
+    public static final int DELIVERY_FIELDER = 21;
+
 
     public static void main(String[] args) {
-        ArrayList<Match> matches = getMatchesData();
-        ArrayList<Delivery> deliveries = getDeliveriesData();
+        List<Match> matches = getMatchesData();
+        List<Delivery> deliveries = getDeliveriesData();
 
         findMatchesPerYear(matches);
+        //showdata(deliveries);
+
         findTeamWinsPerAllYear(matches);
         findExtraRunsConcededPerTeam(matches, deliveries, 2016);
         findTopEconomicalBowler(matches, deliveries, 2015);
@@ -52,88 +56,104 @@ public class Main {
 
     }
 
-    private static ArrayList<Match> getMatchesData() {
-        String line;
-        ArrayList<Match> matches = new ArrayList<>();
+    private static List<Match> getMatchesData() {
+        List<Match> matches = new ArrayList<>();
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("matches.csv"));
-            String fileHeading = reader.readLine();
+        String sql = "SELECT * FROM matches";
+        String url = "jdbc:postgresql://localhost:5432/test";
+        String username = "postgres";
+        String password = "Randhawa@2024";
 
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", -1);
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
                 Match match = new Match();
 
-                match.setId(Integer.parseInt(parts[MATCH_ID]));
-                match.setYear(Integer.parseInt(parts[MATCH_YEAR]));
-                match.setCity(parts[MATCH_CITY]);
-                match.setDate(parts[MATCH_DATE]);
-                match.setTeam1(parts[MATCH_TEAM1]);
-                match.setTeam2(parts[MATCH_TEAM2]);
-                match.setTossWinner(parts[MATCH_TOSS_WINNER]);
-                match.setTossDecision(parts[MATCH_TOSS_DECISION]);
-                match.setResult(parts[MATCH_RESULT]);
-                match.setDl(parts[MATCH_DL]);
-                match.setWinner(parts[MATCH_WINNER]);
-                match.setWinsByRun(Integer.parseInt(parts[MATCH_WIN_BY_RUNS]));
-                match.setWinsByWicket(Integer.parseInt(parts[MATCH_WIN_BY_WICKETS]));
-                match.setPlayer(parts[MATCH_PLAYER]);
-                match.setVenue(parts[MATCH_VENUE]);
-                match.setUmpire1(parts[MATCH_UMPIRE1]);
-                match.setUmpire2(parts[MATCH_UMPIRE2]);
+                match.setId(resultSet.getInt(MATCH_ID));
+                match.setYear(resultSet.getInt(MATCH_YEAR));
+                match.setCity(resultSet.getString(MATCH_CITY));
+                match.setDate(resultSet.getString(MATCH_DATE));
+                match.setTeam1(resultSet.getString(MATCH_TEAM1));
+                match.setTeam2(resultSet.getString(MATCH_TEAM2));
+                match.setTossWinner(resultSet.getString(MATCH_TOSS_WINNER));
+                match.setTossDecision(resultSet.getString(MATCH_TOSS_DECISION));
+                match.setResult(resultSet.getString(MATCH_RESULT));
+                match.setDl(resultSet.getString(MATCH_DL));
+                match.setWinner(resultSet.getString(MATCH_WINNER));
+                match.setWinsByRun(resultSet.getInt(MATCH_WIN_BY_RUNS));
+                match.setWinsByWicket(resultSet.getInt(MATCH_WIN_BY_WICKETS));
+                match.setPlayer(resultSet.getString(MATCH_PLAYER));
+                match.setVenue(resultSet.getString(MATCH_VENUE));
+                match.setUmpire1(resultSet.getString(MATCH_UMPIRE1));
+                match.setUmpire2(resultSet.getString(MATCH_UMPIRE2));
+
                 matches.add(match);
+                connection.close();
             }
-            reader.close();
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return matches;
     }
 
-    private static ArrayList<Delivery> getDeliveriesData() {
-        String line;
-        ArrayList<Delivery> deliveries = new ArrayList<>();
+    private static List<Delivery> getDeliveriesData() {
+        List<Delivery> deliveries = new ArrayList<>();
 
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("deliveries.csv"));
-            String fileHeading = reader.readLine();
+        String sql = "SELECT * FROM deliveries";
+        String url = "jdbc:postgresql://localhost:5432/test";
+        String username = "postgres";
+        String password = "Randhawa@2024";
 
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", -1);
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql))
+        {
+
+            while (resultSet.next()) {
                 Delivery delivery = new Delivery();
-                delivery.setMatchId(Integer.parseInt(parts[MATCH_ID]));
-                delivery.setInning(Integer.parseInt(parts[DELIVERY_INNING]));
-                delivery.setBattingTeam(parts[DELIVERY_BATTING_TEAM]);
-                delivery.setBowlingTeam(parts[DELIVERY_BOWLING_TEAM]);
-                delivery.setOver(Integer.parseInt(parts[DELIVERY_OVER]));
-                delivery.setBall(Integer.parseInt(parts[DELIVERY_BALL]));
-                delivery.setBatsman(parts[DELIVERY_BATSMAN]);
-                delivery.setNon_striker(parts[DELIVERY_NON_STRIKER]);
-                delivery.setBowler(parts[DELIVERY_BOWLER]);
-                delivery.setIsSuperOver(Integer.parseInt(parts[DELIVERY_IS_SUPER_OVER]));
-                delivery.setWideRuns(Integer.parseInt(parts[DELIVERY_RUNS]));
-                delivery.setByeRuns(Integer.parseInt(parts[DELIVERY_BYE_RUNS]));
-                delivery.setLegbyeRuns(Integer.parseInt(parts[DELIVERY_LEGBYE_RUNS]));
-                delivery.setNoballRuns(Integer.parseInt(parts[DELIVERY_NOBALL_RUNS]));
-                delivery.setPenaltyRuns(Integer.parseInt(parts[DELIVERY_PENALTY_RUNS]));
-                delivery.setBatsmanRuns(Integer.parseInt(parts[DELIVERY_BATSMAN_RUNS]));
-                delivery.setExtraRuns(Integer.parseInt(parts[DELIVERY_EXTRA_RUNS]));
-                delivery.setTotalRuns(Integer.parseInt(parts[DELIVERY_TOTAL_RUNS]));
-                delivery.setPlayerDismissed(parts[DELIVERY_PLAYER_DISMISSED]);
-                delivery.setDismissal_kind(parts[DELIVERY_DISMISSAL_KIND]);
-                delivery.setFielder(parts[DELIVERY_FIELDER]);
+
+                delivery.setMatchId(resultSet.getInt(MATCH_ID));
+                delivery.setInning(resultSet.getInt(DELIVERY_INNING));
+                delivery.setBattingTeam(resultSet.getString(DELIVERY_BATTING_TEAM));
+                delivery.setBowlingTeam(resultSet.getString(DELIVERY_BOWLING_TEAM));
+                delivery.setOver(resultSet.getInt(DELIVERY_OVER));
+                delivery.setBall(resultSet.getInt(DELIVERY_BALL));
+                delivery.setBatsman(resultSet.getString(DELIVERY_BATSMAN));
+                delivery.setNonStriker(resultSet.getString(DELIVERY_NON_STRIKER));
+                delivery.setBowler(resultSet.getString(DELIVERY_BOWLER));
+                delivery.setIsSuperOver(resultSet.getInt(DELIVERY_IS_SUPER_OVER));
+                delivery.setWideRuns(resultSet.getInt(DELIVERY_RUNS));
+                delivery.setByeRuns(resultSet.getInt(DELIVERY_BYE_RUNS));
+                delivery.setLegbyeRuns(resultSet.getInt(DELIVERY_LEGBYE_RUNS));
+                delivery.setNoballRuns(resultSet.getInt(DELIVERY_NOBALL_RUNS));
+                delivery.setPenaltyRuns(resultSet.getInt(DELIVERY_PENALTY_RUNS));
+                delivery.setBatsmanRuns(resultSet.getInt(DELIVERY_BATSMAN_RUNS));
+                delivery.setExtraRuns(resultSet.getInt(DELIVERY_EXTRA_RUNS));
+                delivery.setTotalRuns(resultSet.getInt(DELIVERY_TOTAL_RUNS));
+                delivery.setPlayerDismissed(resultSet.getString(DELIVERY_PLAYER_DISMISSED));
+                delivery.setDismissalKind(resultSet.getString(DELIVERY_DISMISSAL_KIND));
+                delivery.setFielder(resultSet.getString(DELIVERY_FIELDER));
 
                 deliveries.add(delivery);
             }
-            reader.close();
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return deliveries;
 
     }
 
-    private static void findMatchesPerYear(ArrayList<Match> matches) {
+    private static void showdata(List<Delivery> deliveries) {
+        for (Delivery delivery : deliveries) {
+            System.out.println(delivery.getMatchId());
+        }
+
+    }
+
+    private static void findMatchesPerYear(List<Match> matches) {
         HashMap<Integer, Integer> matchesPerYear = new HashMap<>();
 
         for (Match match : matches) {
@@ -143,7 +163,7 @@ public class Main {
         System.out.println(matchesPerYear);
     }
 
-    private static void findTeamWinsPerAllYear(ArrayList<Match> matches) {
+    private static void findTeamWinsPerAllYear(List<Match> matches) {
         HashMap<String, Integer> teamWinsPerYear = new HashMap<>();
 
         for (Match match : matches) {
@@ -159,7 +179,7 @@ public class Main {
         System.out.println(teamWinsPerYear);
     }
 
-    public static void findExtraRunsConcededPerTeam(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
+    public static void findExtraRunsConcededPerTeam(List<Match> matches, List<Delivery> deliveries, int year) {
         HashMap<String, Integer> extraRunConcededPerTeam = new HashMap<>();
 
         for (Delivery delivery : deliveries) {
@@ -171,7 +191,7 @@ public class Main {
         System.out.println(extraRunConcededPerTeam);
     }
 
-    public static void findTopEconomicalBowler(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
+    public static void findTopEconomicalBowler(List<Match> matches, List<Delivery> deliveries, int year) {
         HashMap<String, Integer> totalRuns = new HashMap<>();
         HashMap<String, Integer> validBallsCount = new HashMap<>();
 
@@ -206,7 +226,7 @@ public class Main {
         }
     }
 
-    public static void findHighestWicketTakerPerTeam(ArrayList<Match> matches, ArrayList<Delivery> deliveries, int year) {
+    public static void findHighestWicketTakerPerTeam(List<Match> matches, List<Delivery> deliveries, int year) {
         Map<String, Map<String, Integer>> bowlersWithMaxWicketsPerTeam = new HashMap<>();
 
         for (Delivery delivery : deliveries) {
@@ -230,8 +250,7 @@ public class Main {
         }
     }
 
-
-    private static boolean isMatchingYear(ArrayList<Match> data, int year, Delivery delivery) {
+    private static boolean isMatchingYear(List<Match> data, int year, Delivery delivery) {
         for (Match match : data) {
             if (match.getYear() == year && (match.getId()) == (delivery.getMatchId())) {
                 return true;
@@ -239,5 +258,4 @@ public class Main {
         }
         return false;
     }
-
 }
